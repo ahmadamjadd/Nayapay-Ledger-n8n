@@ -1,0 +1,225 @@
+{
+  "name": "Nayapay-Ledger",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nayapay-sync",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3792388b-5d22-496b-8019-22656008fb86",
+      "name": "Webhook",
+      "webhookId": "49affd88-3373-48b4-91cb-d1a75dc280a2"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a financial data extraction expert. Your goal is to process NayaPay transaction notifications into a clean JSON format for automated bookkeeping.\n\n### Rules:\n1. Extract the \"Amount\" as a clean number (remove \"Rs.\", \"PKR\", and all commas).\n2. Extract the \"Recipient\" or \"Merchant\" name.\n3. Determine the \"Transaction_Type\" (e.g., Sent, Received, or Bill Payment).\n4. Extract the \"Time\" if provided.\n5. Output MUST be strictly valid JSON only. \n6. Do not include markdown code blocks (like ```json), explanations, or notes.",
+              "role": "model"
+            },
+            {
+              "content": "=Extract the financial details from this NayaPay notification:\n\nMessage: \"{{ $json.body.message }}\"\nTime: \"{{ $json.body.time }}\"\n\nReturn the data in this exact structure:\n{\n  \"amount\": 0,\n  \"recipient\": \"name\",\n  \"type\": \"type\",\n  \"time\": \"hour:minute\"\n}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "bcd43187-d299-4f1e-aa9e-651a6aec599c",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "X5jYxGj4IFmYD1gp",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "63f2aff3-8ad7-4f6e-99d1-be2bff21c60c",
+              "name": "Json-Transaction",
+              "value": "={{ JSON.parse($json.content.parts[0].text) }}",
+              "type": "object"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        0
+      ],
+      "id": "224566ae-dcff-4d6c-bf7e-3eea1599ee9d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1e4qf5-ubP95NQUXHBGNjBn7reDr2ZWgdss1hX_TeGUM",
+          "mode": "list",
+          "cachedResultName": "Nayapay-Ledger",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e4qf5-ubP95NQUXHBGNjBn7reDr2ZWgdss1hX_TeGUM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Jan 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e4qf5-ubP95NQUXHBGNjBn7reDr2ZWgdss1hX_TeGUM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $json[\"Json-Transaction\"].time }}",
+            "Amount": "={{ $json[\"Json-Transaction\"].amount }}",
+            "Recipient": "={{ $json[\"Json-Transaction\"].recipient }}",
+            "Type": "={{ $json[\"Json-Transaction\"].type }}",
+            "Raw Message": "={{ $json.content.parts[0].text }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Recipient",
+              "displayName": "Recipient",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Raw Message",
+              "displayName": "Raw Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        -16
+      ],
+      "id": "e1d1b29e-d3c6-4833-9efc-66f2c620bef9",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "FJcBLXPrGhacOKDs",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "bc76ed0b-055e-4ad5-b3b5-f4e4f07880ac",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4ab2b104b33744732db6e5605c6b2ff26da2cb69f5bec97d8de9d94bdcf5b93d"
+  },
+  "id": "5mJTGPLTAQo90Txof6_0L",
+  "tags": []
+}

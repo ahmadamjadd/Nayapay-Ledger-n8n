@@ -10,10 +10,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        0,
-        0
+        -832,
+        16
       ],
-      "id": "3792388b-5d22-496b-8019-22656008fb86",
+      "id": "e9340ea9-83ec-4a3f-a409-d8a3262b3d3f",
       "name": "Webhook",
       "webhookId": "49affd88-3373-48b4-91cb-d1a75dc280a2"
     },
@@ -43,14 +43,14 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.1,
       "position": [
-        224,
-        0
+        -608,
+        16
       ],
-      "id": "bcd43187-d299-4f1e-aa9e-651a6aec599c",
+      "id": "dea4ad0f-fe83-4dec-99d5-9ea55bb45fcd",
       "name": "Message a model",
       "credentials": {
         "googlePalmApi": {
-          "id": "X5jYxGj4IFmYD1gp",
+          "id": "iGxUIQIgjn2w3ENr",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -73,10 +73,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        592,
-        0
+        -240,
+        16
       ],
-      "id": "224566ae-dcff-4d6c-bf7e-3eea1599ee9d",
+      "id": "1083c3bc-6b6e-40d9-b6d2-65c812c358b1",
       "name": "Edit Fields"
     },
     {
@@ -161,17 +161,89 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        832,
-        -16
+        16,
+        16
       ],
-      "id": "e1d1b29e-d3c6-4833-9efc-66f2c620bef9",
+      "id": "a14e929e-63a1-4976-89d5-4799398c2e0c",
       "name": "Append row in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "FJcBLXPrGhacOKDs",
+          "id": "th3K7SkT4IS9YmZy",
           "name": "Google Sheets account"
         }
       }
+    },
+    {
+      "parameters": {
+        "content": "### 📥 Webhook (Entry Point)\n**Function:** Listens for NayaPay notification triggers.\n**Configuration:**\n- **URL:** Production URL (AWS Static IP).\n- **HTTP Method:** POST.\n- **Security:** Inbound traffic restricted via AWS Security Groups.",
+        "width": 480
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1200,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "d01b0ee3-ac75-4d4a-92b4-4f09dc5cba36",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### 🧠 AI Extraction (Gemini)\n**Function:** Converts unstructured text into a JSON schema.\n**Configuration:**\n- **Model:** `gemini-1.5-flash`.\n- **Output:** Extracts `amount`, `recipient`, `type`, and `time`.\n- **Constraint:** Forced JSON format for downstream parsing.",
+        "width": 464
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -720,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "72d199c5-6e04-4bdc-bc2e-69fdf7f6313c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "### 🛠️ Data Serialization\n**Function:** Standardizes data for the spreadsheet.\n**Configuration:**\n- **Logic:** `JSON.parse()` converts AI string to object.\n- **Goal:** Type-casting strings to numbers for financial math.",
+        "width": 432
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -384,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "8331912f-b3b0-4660-959f-b32a68c3b4eb",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "### 📊 Google Sheets (Ledger)\n**Function:** Persistent monthly financial storage.\n**Configuration:**\n- **Analytics:** `=SUM(B:B)` formula for real-time totaling.",
+        "height": 128,
+        "width": 496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -48,
+        192
+      ],
+      "typeVersion": 1,
+      "id": "ce7bfb7c-2dd2-46f2-b2f5-c9a9a491bcdd",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "### 🎯 Expense Tracker Overview\n**Goal:** Automate NayaPay transaction logging from mobile notifications to Google Sheets using AI.\n**Stack:** n8n (Docker), AWS EC2 (t2.micro), Terraform, Google Gemini API.\n\n#### ⚙️ How It Works:\n* **Trigger:** Webhook receives POST data from phone (MacroDroid).\n* **AI Engine:** Gemini 1.5 Flash extracts structured data from raw SMS.\n* **Storage:** Dynamic monthly tabs in Google Sheets.",
+        "height": 240,
+        "width": 688
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -784,
+        -560
+      ],
+      "typeVersion": 1,
+      "id": "0429da00-a525-49c5-ba34-5ca7bb44ad9b",
+      "name": "Sticky Note4"
     }
   ],
   "pinData": {},
@@ -215,11 +287,11 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "bc76ed0b-055e-4ad5-b3b5-f4e4f07880ac",
+  "versionId": "be3f4652-f891-4a59-ac9b-4457742b9bb4",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "4ab2b104b33744732db6e5605c6b2ff26da2cb69f5bec97d8de9d94bdcf5b93d"
+    "instanceId": "8ff464a09f5ab64835aba17ed169a2ff50823812f88610000779520a0d457b8c"
   },
-  "id": "5mJTGPLTAQo90Txof6_0L",
+  "id": "NDT-Om6iWJlIB9PN1sjXb",
   "tags": []
 }
